@@ -6,17 +6,42 @@ app = Flask(__name__)
 arm_pubs = []
 table_pub = None
 furikake_pub = None
+init_ok = False
 STEP = 10
 import time
 place_matrix = [[325, 384, 280, 487, 348],
-                [325, 325, 280, 433, 348],
-                [249, 348, 249, 492, 451],
-                [249, 334, 280, 438, 433]]
+                [330, 285, 294, 433, 366],
+                [217, 339, 285, 465, 442],
+                [222, 352, 330, 442, 442],
+                [312, 375, 384, 460, 366]]
 current_arm = [325, 384, 280, 487, 348, 300]
 @app.route("/obento")
 def obento_make():
-    bento_id = requests.args.get('id', default=0, type=int)
-    return "making obento id " + bento_id
+    bento_id = request.args.get('id', default=0, type=int)
+    if bento_id == 0:
+        go_to(0)
+        open_hand()
+        go_to(1)
+        close_hand()
+        go_to(0)
+        go_to(2)
+        go_to(3)
+        open_hand()
+        go_to(2)
+        go_to(0)
+    else:
+        go_to(0)
+        open_hand()
+        go_to(4)
+        close_hand()
+        go_to(0)
+        go_to(2)
+        go_to(3)
+        open_hand()
+        go_to(2)
+        go_to(0)
+        
+    return "making obento id " + str(bento_id)
 
 @app.route("/place")
 def control():
@@ -32,9 +57,16 @@ def furikake():
     else:##stop
         pass
     return "placing furikake"
+@app.route("/open")
 def open_hand():
     move_arm(5, 231)
-
+    time.sleep(1)
+    return "open arm"
+@app.route("/close")    
+def close_hand():
+    move_arm(5, 487)
+    time.sleep(1)    
+    return "close arm"
 def move_arm_gradual(idx, value):
     value = int(value)
     next_value = current_arm[idx]
@@ -75,6 +107,9 @@ def go_home():
     
 @app.route("/init")
 def init_node():
+    global init_ok
+    if init_ok:
+        return "already init ok"
     global pub
     rospy.init_node('webserver', anonymous=True)
     for i in range(6):
@@ -82,6 +117,8 @@ def init_node():
         arm_pubs.append(rospy.Publisher("robot_arm/pulse/" + str(port), Float64, queue_size=10))
     furikake_pub = rospy.Publisher("robot_furikake/pulse", Float64, queue_size=10)
     table_pub = rospy.Publisher("robot_table/pulse", Float64, queue_size=10)
+    time.sleep(1)
+    init_ok = True
     return "init ROS OK"
 if __name__ == "__main__":
     app.run('0.0.0.0', port=3000)
