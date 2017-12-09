@@ -3,7 +3,7 @@ import rospy
 from std_msgs.msg import Float64
 import RPi.GPIO as GPIO
 from time import sleep
-
+step_motor = None
 class DRV8853:
     """コンストラクタ"""
     def __init__(self, PinA1, PinA2, PinB1, PinB2):
@@ -82,21 +82,19 @@ def stepper_pulse_callback(msg):
     pulse = int(msg.data)
     print(pulse)
     if pulse == 2:
-        StepMoter.SetPosition(535,5)
-        #                StepMoter.SetPosition(100,3)
-            sleep(1)
+        step_motor.SetPosition(535,5)
+        sleep(1)
     elif pulse == 1:
-            StepMoter.SetPosition(70,5)
-            #                StepMoter.SetPosition(50,3)
-            sleep(1)
+        step_motor.SetPosition(70,5)
+        sleep(1)
     elif pulse == 0:
-            StepMoter.SetPosition(0,5)
-            sleep(1)
+        step_motor.SetPosition(0,5)
+        sleep(1)
 
 
 if __name__ == "__main__":
     rospy.init_node('robot_table_node')
     rospy.Subscriber("robot_table/pulse", Float64, callback=stepper_pulse_callback)
-    StepMoter = DRV8853(PinA1=4, PinA2=17, PinB1=27, PinB2=22)
-    StepMoter.SetPosition(0,5)
+    step_motor = DRV8853(PinA1=4, PinA2=17, PinB1=27, PinB2=22)
+    step_motor.SetPosition(0,5)
     rospy.spin()
