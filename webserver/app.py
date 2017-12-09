@@ -84,4 +84,4 @@ def init_node():
     table_pub = rospy.Publisher("robot_table/pulse", Float64, queue_size=10)
     return "init ROS OK"
 if __name__ == "__main__":
-    app.run(port=3000)
+    app.run('0.0.0.0', port=3000)
