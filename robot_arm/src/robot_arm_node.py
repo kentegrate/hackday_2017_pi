@@ -39,10 +39,6 @@ def set_servo_pulse(channel, pulse):
     pulse //= pulse_length
     pwm.set_pwm(channel, 0, pulse)
 
-def stepper_pulse_callback(msg):
-    pulse = int(msg.data)
-    print(pulse)
-
 if __name__ == "__main__":
     rospy.init_node('robot_arm_node')
     for i in range(6):
