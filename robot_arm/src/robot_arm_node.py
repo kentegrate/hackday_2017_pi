@@ -48,6 +48,7 @@ if __name__ == "__main__":
     for i in range(6):
         port = i
         rospy.Subscriber("robot_arm/angle/" + str(port), Float64, callback=servo_angle_callback, callback_args=port)
-        rospy.Subscriber("robot_arm/pulse/" + str(port), Float64, callback=servo_pulse_callback, callback_args=port)        
+        rospy.Subscriber("robot_arm/pulse/" + str(port), Float64, callback=servo_pulse_callback, callback_args=port)
+    rospy.Subscriber("robot_furikake/pulse", Float64, callback=servo_pulse_callback, callback_args=6)
     rospy.Subscriber("robot_table/pulse", Float64, callback=stepper_pulse_callback)
     rospy.spin()
