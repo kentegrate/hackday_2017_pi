@@ -18,6 +18,8 @@ current_arm = [325, 384, 280, 487, 348, 300]
 @app.route("/obento")
 def obento_make():
     bento_id = request.args.get('id', default=0, type=int)
+    move_stage_osozai()
+    time.sleep(10)
     if bento_id == 0:
         go_to(0)
         open_hand()
@@ -40,6 +42,12 @@ def obento_make():
         open_hand()
         go_to(2)
         go_to(0)
+    move_stage_gohan()
+    time.sleep(5)
+    furikake()
+    time.sleep(10)
+    move_stage_init()
+    time.sleep(1)
         
     return "making obento id " + str(bento_id)
 
@@ -67,6 +75,22 @@ def close_hand():
     move_arm(5, 487)
     time.sleep(1)    
     return "close arm"
+
+@app.route("/stage/init")
+def move_stage_init():
+    table_pub.publish(2)
+    return "moving table to initial position"
+
+@app.route("/stage/gohan")
+def move_stage_gohan():
+    table_pub.publish(1)
+    return "moving table to gohan position"
+
+@app.route("/stage/osozai")
+def move_stage_osozai():
+    table_pub.publish(0)
+    return "moving table to osozai position"
+
 def move_arm_gradual(idx, value):
     value = int(value)
     next_value = current_arm[idx]
