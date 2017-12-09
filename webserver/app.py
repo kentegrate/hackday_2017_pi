@@ -26,7 +26,14 @@ furikake_matrix = [[294,130],
                    [294,130],
                    [294,242],
                    [438,242],
-                   [438,242]]
+                   [438,242],
+                   [438,130],
+                   [438,130],
+                   [294,130],
+                   [294,242],
+                   [438,242],
+                   [438,242],
+                   [600,275]]
 
 current_arm = [325, 384, 280, 487, 348, 300]
 @app.route("/obento")
@@ -57,7 +64,7 @@ def obento_make():
         go_to(2)
         go_to(0)
     move_stage_gohan()
-#    time.sleep(5)
+    time.sleep(1)
     furikake()
 #    time.sleep(10)
     move_stage_init()
@@ -89,19 +96,23 @@ def close_hand():
     time.sleep(1)    
     return "close arm"
 
+def move_stage(idx):
+    global table_pub
+    table_pub.publish(idx)
+
 @app.route("/stage/init")
 def move_stage_init():
-    table_pub.publish(2)
+    move_stage(2)
     return "moving table to initial position"
 
 @app.route("/stage/gohan")
 def move_stage_gohan():
-    table_pub.publish(1)
+    move_stage(1)
     return "moving table to gohan position"
 
 @app.route("/stage/osozai")
 def move_stage_osozai():
-    table_pub.publish(0)
+    move_stage(0)
     return "moving table to osozai position"
 
 def move_arm_gradual(idx, value):
@@ -145,6 +156,7 @@ def go_home():
 @app.route("/init")
 def init_node():
     global init_ok
+    global table_pub
     if init_ok:
         return "already init ok"
     global pub
